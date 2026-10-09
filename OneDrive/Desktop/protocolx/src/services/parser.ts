@@ -1,11 +1,16 @@
 import { ChatMessage } from '../types';
+import { validateInputPayload, sanitizeText } from './sanitizer';
+
+const MAX_LINE_LENGTH = 10_000;
+const MAX_PARSED_MESSAGES = 2_500;
 
 export function parseConversation(rawText: string): ChatMessage[] {
-  if (!rawText || !rawText.trim()) {
+  const { isValid, sanitized } = validateInputPayload(rawText);
+  if (!isValid || !sanitized) {
     return [];
   }
 
-  const trimmed = rawText.trim();
+  const trimmed = sanitized;
 
   // 1. Check if input is valid JSON
   if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
@@ -13,17 +18,17 @@ export function parseConversation(rawText: string): ChatMessage[] {
       const parsed = JSON.parse(trimmed);
       if (Array.isArray(parsed) && parsed.length > 0) {
         const messages: ChatMessage[] = [];
-        parsed.forEach((item, idx) => {
-          const sender = item.sender || item.author || item.user || item.name || `User ${idx + 1}`;
-          const content = item.text || item.content || item.message || '';
+        parsed.slice(0, MAX_PARSED_MESSAGES).forEach((item, idx) => {
+          const sender = sanitizeText(String(item.sender || item.author || item.user || item.name || `User ${idx + 1}`));
+          const content = sanitizeText(String(item.text || item.content || item.message || ''));
           const timestamp = item.timestamp || item.time || item.date || undefined;
           if (content.trim()) {
             messages.push({
               id: `msg-${idx + 1}`,
-              sender: String(sender).trim(),
-              timestamp: timestamp ? String(timestamp).trim() : undefined,
-              rawTime: timestamp ? String(timestamp).trim() : undefined,
-              content: String(content).trim(),
+              sender: sender.trim().slice(0, 80),
+              timestamp: timestamp ? String(timestamp).trim().slice(0, 50) : undefined,
+              rawTime: timestamp ? String(timestamp).trim().slice(0, 50) : undefined,
+              content: content.trim(),
               originalIndex: idx,
             });
           }
@@ -37,31 +42,35 @@ export function parseConversation(rawText: string): ChatMessage[] {
 
   // Regex patterns for different chat platforms:
   // Slack pattern: [10:30 AM] Alice: Hello or Alice [10:30 AM]: Hello
-  const slackPattern1 = /^\[([^\]]+)\]\s+([^:]+):\s*(.*)$/;
-  const slackPattern2 = /^([^\[:]+)\[([^\]]+)\]:\s*(.*)$/;
-  const slackPattern3 = /^([^:]+)\s+(\d{1,2}:\d{2}(?:\s*[AaPp][Mm])?):\s*(.*)$/;
+  const slackPattern1 = /^\[([^\]]{1,50})\]\s+([^:]{1,80}):\s*(.*)$/;
+  const slackPattern2 = /^([^\[:]{1,80})\[([^\]]{1,50})\]:\s*(.*)$/;
+  const slackPattern3 = /^([^:]{1,80})\s+(\d{1,2}:\d{2}(?:\s*[AaPp][Mm])?):\s*(.*)$/;
 
   // WhatsApp patterns:
   // 10/12/26, 9:30 AM - Bob: Hello
   // [10/12/26, 9:30:15 AM] Bob: Hello
-  const whatsAppPattern1 = /^(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4},?\s+\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AaPp][Mm])?)\s*[-—]\s*([^:]+):\s*(.*)$/;
-  const whatsAppPattern2 = /^\[(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4},?\s+\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AaPp][Mm])?)\]\s*([^:]+):\s*(.*)$/;
+  const whatsAppPattern1 = /^(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4},?\s+\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AaPp][Mm])?)\s*[-—]\s*([^:]{1,80}):\s*(.*)$/;
+  const whatsAppPattern2 = /^\[(\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4},?\s+\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AaPp][Mm])?)\]\s*([^:]{1,80}):\s*(.*)$/;
 
   // Discord / Teams patterns:
   // Alice — Today at 3:15 PM: Hello
   // Alice at 3:15 PM: Hello
-  const discordPattern = /^([^\—\-:]+)\s*[\—\-]?\s*(?:Today at|Yesterday at|at)?\s*(\d{1,2}:\d{2}(?:\s*[AaPp][Mm])?):\s*(.*)$/;
+  const discordPattern = /^([^\—\-:]{1,80})\s*[\—\-]?\s*(?:Today at|Yesterday at|at)?\s*(\d{1,2}:\d{2}(?:\s*[AaPp][Mm])?):\s*(.*)$/;
 
   // Generic Name: Message pattern
-  const genericColonPattern = /^([A-Z0-9a-z\s\._@\-\(\)]+?):\s+(.*)$/;
+  const genericColonPattern = /^([A-Z0-9a-z\s\._@\-\(\)]{1,80}?):\s+(.*)$/;
 
-  const lines = rawText.split(/\r?\n/);
+  const lines = trimmed.split(/\r?\n/);
   const messages: ChatMessage[] = [];
   let currentMsg: ChatMessage | null = null;
   let counter = 1;
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
+  for (let i = 0; i < lines.length && messages.length < MAX_PARSED_MESSAGES; i++) {
+    // ReDoS protection: bound line length to MAX_LINE_LENGTH
+    let line = lines[i];
+    if (line.length > MAX_LINE_LENGTH) {
+      line = line.slice(0, MAX_LINE_LENGTH);
+    }
     if (!line.trim()) {
       if (currentMsg) {
         currentMsg.content += '\n';

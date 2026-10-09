@@ -45,8 +45,8 @@ class AuthResponse(BaseModel):
     message: str
 
 class ConversationInput(BaseModel):
-    text: str = Field(..., description="Raw conversation transcript")
-    user_name: Optional[str] = Field(None, description="Optional name of the user to detect direct mentions")
+    text: str = Field(..., min_length=1, max_length=2_000_000, description="Raw conversation transcript bounded to 2MB")
+    user_name: Optional[str] = Field(None, max_length=100, description="Optional name of the user to detect direct mentions")
     context: ContextType = Field("general", description="Context of the conversation: college, work, project, general")
     summary_length: SummaryLengthType = Field("detailed", description="Desired summary length: short or detailed")
     use_cloud_ai: bool = Field(False, description="Whether remote AI processing was explicitly opted into")

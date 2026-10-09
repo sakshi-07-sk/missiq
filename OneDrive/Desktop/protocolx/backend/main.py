@@ -28,21 +28,31 @@ app = FastAPI(
     version="2.5.0"
 )
 
-# CORS configuration
+# Secure CORS configuration
 origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:3000",
-    "*"
+    "https://missiq-ai-2026.web.app",
+    "https://missiq-ai-2026.firebaseapp.com"
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    return response
 
 # In-memory aggregate telemetry for Admin (NO PRIVATE CHAT LOGS STORED)
 telemetry_store = {

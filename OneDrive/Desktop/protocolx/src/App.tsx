@@ -1,22 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { PageLoadingSkeleton } from './components/PageLoadingSkeleton';
+
 import { PublicLayout } from './layouts/PublicLayout';
 import { UserAppLayout } from './layouts/UserAppLayout';
 import { AdminLayout } from './layouts/AdminLayout';
 
-import { LandingPage } from './pages/LandingPage';
-import { WorkspacePage } from './pages/WorkspacePage';
-import { ActionItemsPage } from './pages/ActionItemsPage';
-import { SavedSummariesPage } from './pages/SavedSummariesPage';
-import { SettingsPage } from './pages/SettingsPage';
-import { CalendarPage } from './pages/CalendarPage';
-import { AdminPage } from './pages/AdminPage';
-import { SignUpPage } from './pages/SignUpPage';
-import { LoginPage } from './pages/LoginPage';
-import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
-import { AdminLoginPage } from './pages/AdminLoginPage';
-import { DemoPage } from './pages/DemoPage';
+// Performance Optimization: Route-level code-splitting with React.lazy
+const LandingPage = lazy(() => import('./pages/LandingPage').then(m => ({ default: m.LandingPage })));
+const WorkspacePage = lazy(() => import('./pages/WorkspacePage').then(m => ({ default: m.WorkspacePage })));
+const ActionItemsPage = lazy(() => import('./pages/ActionItemsPage').then(m => ({ default: m.ActionItemsPage })));
+const SavedSummariesPage = lazy(() => import('./pages/SavedSummariesPage').then(m => ({ default: m.SavedSummariesPage })));
+const SettingsPage = lazy(() => import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const CalendarPage = lazy(() => import('./pages/CalendarPage').then(m => ({ default: m.CalendarPage })));
+const AdminPage = lazy(() => import('./pages/AdminPage').then(m => ({ default: m.AdminPage })));
+const SignUpPage = lazy(() => import('./pages/SignUpPage').then(m => ({ default: m.SignUpPage })));
+const LoginPage = lazy(() => import('./pages/LoginPage').then(m => ({ default: m.LoginPage })));
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })));
+const AdminLoginPage = lazy(() => import('./pages/AdminLoginPage').then(m => ({ default: m.AdminLoginPage })));
+const DemoPage = lazy(() => import('./pages/DemoPage').then(m => ({ default: m.DemoPage })));
 
 import { PrivacyModal } from './components/PrivacyModal';
 import { AuthModal } from './components/AuthModal';
@@ -133,9 +137,11 @@ export function App() {
   };
 
   return (
-    <ThemeProvider>
-      <BrowserRouter>
-      <Routes>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <BrowserRouter>
+          <Suspense fallback={<PageLoadingSkeleton />}>
+            <Routes>
         {/* 1. PUBLIC MARKETING WEBSITE ROUTE: / */}
         <Route
           path="/"
@@ -295,6 +301,7 @@ export function App() {
         {/* Fallback to Landing */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+    </Suspense>
 
       {/* Global Modals */}
       <PrivacyModal
@@ -319,6 +326,7 @@ export function App() {
       />
     </BrowserRouter>
   </ThemeProvider>
+</ErrorBoundary>
   );
 }
 
