@@ -1,0 +1,11 @@
+[08:45 AM] Class Rep Rohit: Good morning everyone. Please note that Professor Sharma rescheduled the CS302 Distributed Systems midterm exam to next Wednesday at 10:00 AM in Audi-2.
+[08:48 AM] Priya: Thanks Rohit! Is the submission portal for Assignment 4 still closing tonight?
+[08:50 AM] Rohit: Urgent: Assignment 4 portal closes strictly tonight at 11:59 PM. Late submissions will receive an automatic 20% penalty.
+[08:52 AM] Ananya: @Priya can you share the benchmark test dataset link? The Google Drive link on Moodle is showing Permission Denied.
+[08:55 AM] Priya: Yes Ananya, I will re-share the public dataset link on the class forum before 1:00 PM today.
+[09:02 AM] Vikram: Does anyone know if Question 5 on Raft Consensus is mandatory or optional?
+[09:05 AM] Rohit: Decision: The TA confirmed Question 5 is strictly mandatory for team projects, but optional for individual submissions.
+[09:12 AM] Ananya: Action item: Vikram needs to commit the Docker Compose setup to GitHub before 6:00 PM so we can run integration tests.
+[09:15 AM] Vikram: Understood, I'm working on the compose file now. Will push by 5:30 PM.
+[09:20 AM] Rohit: Also, college fee payment deadline for Semester 6 is this Friday, October 16th. Don't miss it or hall tickets won't be issued.
+[09:25 AM] Class Rep Rohit: Please fill out the lab elective preference form by tomorrow 5:00 PM. Forms submitted after that will not be accepted.

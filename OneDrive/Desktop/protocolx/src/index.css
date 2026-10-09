@@ -1,0 +1,198 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+
+    /* Light Theme Tokens (Arctic Day / Frost) — DEFAULT LIGHT BACKGROUND */
+    --color-background: 246, 249, 249;        /* #F6F9F9 Clean, airy, bright light background */
+    --color-surface: 255, 255, 255;           /* #FFFFFF Pure white surfaces */
+    --color-surface-elevated: 238, 244, 244;  /* #EEF4F4 Soft subtle elevation */
+    --color-input: 255, 255, 255;             /* #FFFFFF Crisp inputs */
+    --color-border: 216, 230, 229;            /* #D8E6E5 Refined hairline borders */
+
+    --color-primary: 13, 148, 136;            /* #0D9488 Vibrant high-contrast teal */
+    --color-primary-hover: 15, 118, 110;      /* #0F766E */
+    --color-primary-pressed: 17, 94, 89;      /* #115E59 */
+
+    --color-secondary: 79, 70, 229;           /* #4F46E5 Crisp periwinkle/indigo */
+
+    --color-text: 15, 28, 30;                 /* #0F1C1E Deep dark charcoal teal */
+    --color-muted: 78, 102, 101;              /* #4E6665 High-contrast muted text */
+    --color-subtle: 120, 146, 145;            /* #789291 */
+
+    --color-success: 5, 150, 105;             /* #059669 */
+    --color-warning: 217, 119, 6;             /* #D97706 */
+    --color-error: 225, 29, 72;               /* #E11D48 */
+    --color-info: 37, 99, 235;                /* #2563EB */
+
+    --btn-primary-bg: #0D9488;
+    --btn-primary-text: #FFFFFF;
+    --btn-primary-hover: #0F766E;
+
+    --btn-secondary-bg: rgba(79, 70, 229, 0.08);
+    --btn-secondary-border: rgba(79, 70, 229, 0.2);
+    --btn-secondary-text: #3730A3;
+
+    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 8px 24px -4px rgba(13, 148, 136, 0.06);
+    --hero-glow: radial-gradient(circle at 50% 20%, rgba(13, 148, 136, 0.12) 0%, rgba(79, 70, 229, 0.05) 45%, transparent 70%);
+
+    --radius-card: 16px;
+    --radius-control: 12px;
+  }
+
+  .dark, :root.dark {
+    color-scheme: dark;
+
+    /* Dark Arctic Aurora Tokens */
+    --color-background: 7, 26, 28;            /* #071A1C */
+    --color-surface: 16, 42, 44;              /* #102A2C */
+    --color-surface-elevated: 22, 54, 56;     /* #163638 */
+    --color-input: 11, 34, 36;                /* #0B2224 */
+    --color-border: 40, 80, 82;               /* #285052 */
+
+    --color-primary: 69, 224, 193;            /* #45E0C1 */
+    --color-primary-hover: 103, 232, 206;     /* #67E8CE */
+    --color-primary-pressed: 41, 191, 163;    /* #29BFA3 */
+
+    --color-secondary: 138, 168, 255;         /* #8AA8FF */
+
+    --color-text: 240, 255, 252;              /* #F0FFFC */
+    --color-muted: 155, 189, 184;             /* #9BBDB8 */
+    --color-subtle: 106, 143, 138;            /* #6A8F8A */
+
+    --color-success: 69, 214, 160;            /* #45D6A0 */
+    --color-warning: 255, 199, 119;           /* #FFC777 */
+    --color-error: 255, 127, 145;             /* #FF7F91 */
+    --color-info: 138, 168, 255;              /* #8AA8FF */
+
+    --btn-primary-bg: #45E0C1;
+    --btn-primary-text: #071A1C;
+    --btn-primary-hover: #67E8CE;
+
+    --btn-secondary-bg: rgba(138, 168, 255, 0.12);
+    --btn-secondary-border: rgba(138, 168, 255, 0.25);
+    --btn-secondary-text: #F0FFFC;
+
+    --card-shadow: 0 4px 20px -2px rgba(4, 15, 17, 0.6), inset 0 1px 0 0 rgba(69, 224, 193, 0.08);
+    --hero-glow: radial-gradient(circle at 50% 20%, rgba(69, 224, 193, 0.16) 0%, rgba(138, 168, 255, 0.08) 40%, transparent 70%);
+  }
+  
+  html {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-text));
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  
+  body {
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-text));
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+}
+
+/* Custom Arctic Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--color-background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--color-primary), 0.25);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--color-primary), 0.5);
+}
+
+/* Arctic Surfaces */
+.surface-card {
+  background: rgb(var(--color-surface));
+  border: 1px solid rgb(var(--color-border));
+  box-shadow: var(--card-shadow);
+}
+
+.surface-card-hover {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.surface-card-hover:hover {
+  border-color: rgba(var(--color-primary), 0.45);
+  box-shadow: 0 10px 30px -4px rgba(var(--color-primary), 0.15);
+  transform: translateY(-1px);
+}
+
+/* Gradient typography */
+.gradient-hero-text,
+.gradient-violet-text,
+.aurora-gradient-text {
+  background: linear-gradient(135deg, rgb(var(--color-text)) 15%, rgb(var(--color-primary)) 65%, rgb(var(--color-secondary)) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Primary Actions */
+.gradient-btn,
+.gradient-btn-hero,
+.aurora-btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  font-weight: 700;
+  box-shadow: 0 4px 18px -2px rgba(var(--color-primary), 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gradient-btn:hover:not(:disabled),
+.gradient-btn-hero:hover:not(:disabled),
+.aurora-btn-primary:hover:not(:disabled) {
+  background: var(--btn-primary-hover);
+  box-shadow: 0 6px 24px -2px rgba(var(--color-primary), 0.45);
+  transform: translateY(-1px);
+}
+
+.gradient-btn:active:not(:disabled),
+.gradient-btn-hero:active:not(:disabled),
+.aurora-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Secondary Button */
+.aurora-btn-secondary {
+  background: var(--btn-secondary-bg);
+  border: 1px solid var(--btn-secondary-border);
+  color: var(--btn-secondary-text);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.aurora-btn-secondary:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.subtle-border {
+  border: 1px solid rgb(var(--color-border));
+}
+
+/* Atmospheric Glows */
+.hero-glow-radial {
+  background: var(--hero-glow);
+}
+
+.glow-ambient-violet,
+.glow-ambient-mint {
+  box-shadow: 0 0 50px -10px rgba(var(--color-primary), 0.15);
+}
+
+.glow-ambient-cyan,
+.glow-ambient-periwinkle {
+  box-shadow: 0 0 50px -10px rgba(var(--color-secondary), 0.15);
+}
